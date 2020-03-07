@@ -1,84 +1,86 @@
-import math
-import random
-import pygame
+#!/usr/bin/env python3
+
 import tkinter as tk
-from tkinter import messagebox
+import pygame
+import sys
 
 
-WIDTH = 500
-HEIGHT = 500
-ROWS = 20
+class Board(object):
+    def __init__(self, w: int = 500, h: int = 500, r: int = 20):
+        self._width = w
+        self._height = h
+        self._rows = r
+        self._gap = w // r
+    
+    def draw(self, window) -> None:
+        gap = self._width // self._rows
+        window.fill((225,225,225))
+        x=0
+        y=0
+        for line in range(self._rows):
+            x=x+gap
+            y=y+gap
+            pygame.draw.line( window, (255,0,0), (x,0),(x,self._width))
+            pygame.draw.line( window,(255,0,0), (0,y), (self._width,y))
 
 
-class cube( object ):
-    rows = 0
-    w = 0
-    def __init__( self, start, dir_x=1, dir_y=0, color=( 255,0,0 ) ):
-        pass
+        pygame.display.flip()
 
-    def move( self, dir_x, dir_y ):
-        pass
+    def draw_square(self, window, snake):
+        square = pygame.Surface((self._gap,self._gap))
+        square.fill((255,0,0))
+        window.blit(square, (snake.get_x() * self._gap ,snake.get_y()*self._gap))
 
-    def draw( self, surface, e_yes=False ):
-        pass
+class Snake(object):
+    def __init__(self, x: int = 10, y: int = 10) -> None:
+        self._x = x     # x pos
+        self._y = y     # y pos
+        self._xV = 1    # x velocity
+        self._yV = 0    # y velocity
+        self._size = 3  # size of snake
+        self._body = [(int,int)*100]
 
-class snake( object ):
-    def __init__( self, color, pos ):
-        pass
+    def update_pos(self):
+        self._x += self._xV
+        self._y += self._yV
 
-    def move( self ):
-        pass
+        if self._x >= 20:
+            self._x = 0
+        if self._x <= 0:
+            self._x = 20
 
-    def reset( self, pos ):
-        pass
+        if self._y > 20:
+            self._y = 1
+        if self._y < 0:
+            self._y = 20
 
-    def addCube( self ):
-        pass
-
-    def draw( self, surface ):
-        pass
-
-
-def draw_grid( w, rows, surface ):
-    size_btwn = w // rows
-
-    x = 0
-    y = 0
-    for l in range( rows ):
-        x = x + size_btwn
-        y = y + size_btwn
-
-        # pygame.draw.line( surface, (255,0,0), (x,0), (x,w) )
-        pygame.draw.line( surface, (255,0,0), (0,y), (w,y) )
-
-
-def redraw_window( surface ):
-    surface.fill(( 0, 0, 0 ))
-    draw_grid( WIDTH, ROWS, surface )
-    pygame.display.update()
-
-
-def random_snack( rows, items ):
-    pass
-
-def message_box( subject, content ):
-    pass
+    def get_x(self):
+        return self._x
+    def get_y(self):
+        return self._y
 
 def main():
-    rows = 20
-    win = pygame.display.set_mode(( WIDTH, HEIGHT ))
-    snakee = snake(( 255,0,0 ), ( 10, 10 ))
-    flag = True
-
-    clock = pygame.time.Clock()
-
-    while flag:
-        pygame.time.delay(100)
-        clock.tick(10)
-
-        redraw_window( win )
-
-
+    pygame.init()
+    board = Board()
+    window = pygame.display.set_mode((500,500))
+    pygame.display.set_caption("Snake")
+    fps = pygame.time.Clock()
+    snake = Snake()
+    running = True
+    x=0
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+        board.draw(window)
+        board.draw_square(window, snake)
+        snake.update_pos()
+        x+=1
+        if x > 20:
+            x = 1
+        pygame.display.flip()
+        fps.tick(14)
+        
 
 if __name__ == "__main__":
     main()
