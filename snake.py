@@ -18,29 +18,22 @@ import sys
 #*******************************************#
 class Board(object):
     def __init__(self, w: int = 500, h: int = 500, r: int = 20):
-        self._width = w
-        self._height = h
-        self._rows = r
-        self._gap = w // r
+        self.__width = w
+        self.__height = h
+        self.__rows = r
+        self.__gap = w // r
     
     def draw(self, window) -> None:
-        gap = self._width // self._rows
+        gap = self.__width // self.__rows
         window.fill((225,225,225))
         x=0
         y=0
-        for line in range(self._rows):
+        for line in range(self.__rows):
             x=x+gap
             y=y+gap
-            pygame.draw.line( window, (255,0,0), (x,0),(x,self._width))
-            pygame.draw.line( window,(255,0,0), (0,y), (self._width,y))
-
-
+            pygame.draw.line( window, (0,0,0), (x,0),(x,self.__width))
+            pygame.draw.line( window,(0,0,0), (0,y), (self.__width,y))
         pygame.display.flip()
-
-    def draw_square(self, window, snake):
-        square = pygame.Surface((self._gap,self._gap))
-        square.fill((255,0,0))
-        window.blit(square, (snake.get_x() * self._gap ,snake.get_y()*self._gap))
 #############################################
 
 
@@ -49,46 +42,92 @@ class Board(object):
 #*******************************************#
 class Snake(object):
     def __init__(self, x: int = 10, y: int = 10) -> None:
-        self._x = x     # x pos
-        self._y = y     # y pos
-        self._xV = 1    # x velocity
-        self._yV = 0    # y velocity
-        self._size = 3  # size of snake
-        self._body = [(int,int)*100]
+        self.__xV = 1    # x velocity
+        self.__yV = 0    # y velocity
+        self.__size = 3  # size of snake
+        start_x = 10     # starting x coordinate
+        start_y = 10     # starting y coordinate
+        self.__head = Square(start_x, start_y) 
+        self.__body = []
+        for i in range(self.__size):
+            start_x -= 1
+            self.__body.append(Square(start_x, start_y))
 
     def update_pos(self):
-        self._x += self._xV # update x pos according to x velocity
-        self._y += self._yV # update y pos according to y velocity
+        # Update head of snake according to velocities,
+        # and body according to square in front of it
+        for i in range(self.__size - 1, -1, -1):
+            if i == 0:
+                self.__body[i].x = self.__head.x
+                self.__body[i].y = self.__head.y
+            else:
+                self.__body[i].x = self.__body[i-1].x
+                self.__body[i].y = self.__body[i-1].y
 
-        if self._x > 19:    # If snake has gone off right side of board:
-            self._x = 0     # Place snake left side of board
-        if self._x < 0:     # If snake has gone off of left side of board:
-            self._x = 19    # Place snake on right side of board
+        self.__head.x += self.__xV # update x pos according to x velocity
+        self.__head.y += self.__yV # update y pos according to y velocity
 
-        if self._y > 19:
-            self._y = 0
-        if self._y < 0:
-            self._y = 19
+        if self.__head.x > 19:    # If snake has gone off right side of board:
+            self.__head.x = 0     # Place snake left side of board
+        if self.__head.x < 0:     # If snake has gone off of left side of board:
+            self.__head.x = 19    # Place snake on right side of board
+
+        if self.__head.y > 19:
+            self.__head.y = 0
+        if self.__head.y < 0:
+            self.__head.y = 19
 
     def dir_up(self):
         # If not going down, change direction to up.
-        if self._yV != 1:   # if not going down
-            self._yV = -1   # go up
-            self._xV = 0    # don't move horizontally
+        if self.__yV != 1:   # if not going down
+            self.__yV = -1   # go up
+            self.__xV = 0    # don't move horizontally
 
     def dir_right(self):
         # If  not going left, change direction to right.
-        if self._xV != -1:  # if not going left
-            self._xV = 1    # go right
-            self._yV = 0    # don't move vertically
+        if self.__xV != -1:  # if not going left
+            self.__xV = 1    # go right
+            self.__yV = 0    # don't move vertically
+
+    def dir_left(self):
+        # If not going right, change direction to left.
+        if self.__xV != 1:  # if not going right
+            self.__xV = -1  # go left
+            self.__yV  = 0  # dont move horizontally
+
+    def dir_down(self):
+        # If not going up, change direction to down.
+        if self.__yV != -1: # if not going up
+            self.__yV = 1   # go down
+            self.__xV = 0   # dont move vertically
+
+    def draw(self, window):
+        self.__head.draw(window)
+        for i in range(self.__size):
+            self.__body[i].draw(window)
 
     # GETTERS
-    def get_x(self):
-        return self._x
-    def get_y(self):
-        return self._y
-
+    def get__x(self):
+        return self.__x
+    def get__y(self):
+        return self.__y
 ######################################
+
+
+#**************************************#
+#                Square                #
+#**************************************#
+class Square(object):
+    def __init__(self, start_x, start_y):
+        self.x = start_x # x coordinate
+        self.y = start_y # y coordinate
+        self.__gap = 500 // 20
+
+    def draw(self, window):
+         square = pygame.Surface((self.__gap - 1,self.__gap - 1))
+         square.fill((255,0,0))
+         window.blit(square, (self.x * self.__gap + 1 ,self.y * self.__gap + 1))
+########################################
 
 
 #************************************#
@@ -107,19 +146,19 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
         keys = pygame.key.get_pressed()         # This will give us a dictonary where each key has a value of 1 or 0. Where 1 is pressed and 0 is not pressed.
-        if keys[pygame.K_LEFT]:                 # We can check if a key is pressed like this
-            pass
+        if keys[pygame.K_LEFT]:                 # Left pushed
+            snake.dir_left()                    # Go left
         if keys[pygame.K_RIGHT]:                # Right pushed
             snake.dir_right()                   # Go right
         if keys[pygame.K_UP]:                   # Left pushed
             snake.dir_up()                      # Go up
-        if keys[pygame.K_DOWN]:
-            pass
+        if keys[pygame.K_DOWN]:                 # Down pushed
+            snake.dir_down()                    # Go down
         snake.update_pos()                      # update snake position
         board.draw(window)                      # draw board to window
-        board.draw_square(window, snake)        # draw snake to window
+        snake.draw(window)                      # draw snake to window
         pygame.display.flip()                   # update the window
-        fps.tick(10)                            # max fps
+        fps.tick(8)                            # max fps
         
 
 # call main
