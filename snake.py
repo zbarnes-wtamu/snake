@@ -11,6 +11,8 @@
 import tkinter as tk
 import pygame
 import sys
+import random
+from datetime import datetime
 
 
 #*******************************************#
@@ -49,6 +51,7 @@ class Snake(object):
         start_y = 10     # starting y coordinate
         self.__head = Square(start_x, start_y) 
         self.__body = []
+        self.__food = Square(15,15)
         for i in range(self.__size):
             start_x -= 1
             self.__body.append(Square(start_x, start_y))
@@ -56,6 +59,9 @@ class Snake(object):
     def update_pos(self):
         # Update head of snake according to velocities,
         # and body according to square in front of it
+        if self.__head.x == self.__food.x and self.__head.y == self.__food.y:
+            self.eat_food()
+            self.grow()
         for i in range(self.__size - 1, -1, -1):
             if i == 0:
                 self.__body[i].x = self.__head.x
@@ -66,6 +72,7 @@ class Snake(object):
 
         self.__head.x += self.__xV # update x pos according to x velocity
         self.__head.y += self.__yV # update y pos according to y velocity
+
 
         if self.__head.x > 19:    # If snake has gone off right side of board:
             self.__head.x = 0     # Place snake left side of board
@@ -101,7 +108,16 @@ class Snake(object):
             self.__yV = 1   # go down
             self.__xV = 0   # dont move vertically
 
+    def eat_food(self):
+        self.__food.x = random.randint(0,19)
+        self.__food.y = random.randint(0,19)
+
+    def grow(self):
+        self.__size += 1
+        self.__body.append(Square(1,1))
+
     def draw(self, window):
+        self.__food.draw(window)
         self.__head.draw(window)
         for i in range(self.__size):
             self.__body[i].draw(window)
@@ -136,10 +152,10 @@ class Square(object):
 def main():
     pygame.init()                               # Initialize pygame
     board = Board()                             # create board object
+    snake  = Snake()
     window = pygame.display.set_mode((500,500)) # create window 500x500
     pygame.display.set_caption("Snake")         # Window title is Snake
     fps = pygame.time.Clock()                   # create clock object 
-    snake = Snake()                             # create snake object
     running = True                              # boolean for game loop
     while running:
         for event in pygame.event.get():
