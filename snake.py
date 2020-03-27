@@ -9,6 +9,7 @@
 #################################################
 
 import tkinter as tk
+# from tkinter import *
 import pygame
 import sys
 import random
@@ -74,6 +75,7 @@ class Snake(object):
         self.__head.y += self.__yV # update y pos according to y velocity
 
 
+
         if self.__head.x > 19:    # If snake has gone off right side of board:
             self.__head.x = 0     # Place snake left side of board
         if self.__head.x < 0:     # If snake has gone off of left side of board:
@@ -122,11 +124,16 @@ class Snake(object):
         for i in range(self.__size):
             self.__body[i].draw(window)
 
+    def check_collision(self) -> bool:
+        collision = False
+        for segment in self.__body:
+            if segment.x == self.__head.x and segment.y == self.__head.y:
+                collision = True
+        return collision
+
     # GETTERS
-    def get__x(self):
-        return self.__x
-    def get__y(self):
-        return self.__y
+    def size(self):
+        return self.__size
 ######################################
 
 
@@ -144,6 +151,12 @@ class Square(object):
          square.fill((255,0,0))
          window.blit(square, (self.x * self.__gap + 1 ,self.y * self.__gap + 1))
 ########################################
+
+def game_over(score):
+    msg = "Your score was " + str(score)
+    # root = Tk()
+    # Tk().wm_withdraw()
+    messagebox.showinfo('GAME OVER',msg)
 
 
 #************************************#
@@ -175,7 +188,7 @@ def main():
         snake.draw(window)                      # draw snake to window
         pygame.display.flip()                   # update the window
         fps.tick(8)                            # max fps
-        
+        running = not snake.check_collision()
 
 # call main
 if __name__ == "__main__":
