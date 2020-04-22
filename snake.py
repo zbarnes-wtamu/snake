@@ -9,7 +9,6 @@
 #################################################
 
 import tkinter as tk
-# from tkinter import *
 import pygame
 import sys
 import random
@@ -20,13 +19,36 @@ from datetime import datetime
 #                BOARD CLASS                #
 #*******************************************#
 class Board(object):
+    '''
+    A Board holds the attributes of our game background (board) as well
+    as a method to draw the board to our game window.
+
+    Values:
+        __width  - width of board in pixels
+        __height - height of board in pixels
+        __rows   - rows is width (and height) in squares
+        __gap    - gap is the width of one row in pixels
+
+    Method:
+        draw(self, window) - used to draw board on specified window
+    '''
+
     def __init__(self, w: int = 500, h: int = 500, r: int = 20):
+        '''
+        __init__ is called when a Board object is created. It
+        initializes the attributes __width, __height, and __rows of
+        Board according to args it receives. __gap is calculated by
+        width // rows.
+        '''
         self.__width = w
         self.__height = h
         self.__rows = r
         self.__gap = w // r
-    
+
     def draw(self, window) -> None:
+        '''
+        Draws the board on the window passed by the caller.
+        '''
         gap = self.__width // self.__rows
         window.fill((225,225,225))
         x=0
@@ -50,7 +72,7 @@ class Snake(object):
         self.__size = 3  # size of snake
         start_x = 10     # starting x coordinate
         start_y = 10     # starting y coordinate
-        self.__head = Square(start_x, start_y) 
+        self.__head = Square(start_x, start_y)
         self.__body = []
         self.__food = Square(15,15)
         for i in range(self.__size):
@@ -168,7 +190,7 @@ def main():
     snake  = Snake()
     window = pygame.display.set_mode((500,500)) # create window 500x500
     pygame.display.set_caption("Snake")         # Window title is Snake
-    fps = pygame.time.Clock()                   # create clock object 
+    fps = pygame.time.Clock()                   # create clock object
     running = True                              # boolean for game loop
     while running:
         for event in pygame.event.get():
