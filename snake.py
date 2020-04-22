@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 
-#################################################
-#   FILE:       snake.py                        #
-#                                               #
-#   AUTHORS:    Zach Barnes Gabi Chavez         #
-#                                               #
-#   DATA:       3/11/20                         #
-#################################################
+'''
+SSSSnake
+
+Authors: Gabi Chavez, Zach Barnes
+
+Snake game that we based on the classic snake game made popular by
+early mobile phones.
+
+'''
 
 import tkinter as tk
 import pygame
@@ -15,9 +17,6 @@ import random
 from datetime import datetime
 
 
-#*******************************************#
-#                BOARD CLASS                #
-#*******************************************#
 class Board(object):
     '''
     A Board holds the attributes of our game background (board) as well
@@ -59,13 +58,22 @@ class Board(object):
             pygame.draw.line( window, (0,0,0), (x,0),(x,self.__width))
             pygame.draw.line( window,(0,0,0), (0,y), (self.__width,y))
         pygame.display.flip()
-#############################################
 
 
-#*******************************************#
-#                SNAKE CLASS                #
-#*******************************************#
 class Snake(object):
+    '''
+    A Snake object holds the attributes and defines the behavior of
+    our snake. It uses instances of the square class to hold
+    the coordinates of its head, body, and to help draw to window.
+
+    Attributes:
+        __xV   - velocity on x-axis
+        __yV   - velocity on y-axis
+        __size - length of tail
+        __head - Square object containing coordinates for head
+        __body - list of Square objects to hold coords for body
+        __food - Square object representing the snake's food
+    '''
     def __init__(self, x: int = 10, y: int = 10) -> None:
         self.__xV = 1    # x velocity
         self.__yV = 0    # y velocity
@@ -80,6 +88,16 @@ class Snake(object):
             self.__body.append(Square(start_x, start_y))
 
     def update_pos(self):
+        '''
+        This method is called in order to update the state of our snake
+        object during the game.
+
+        Logic:
+            1st - if food is being eaten, call eat_food() and grow()
+            2nd - update each body segment position according to previous seg
+            3rd - update head position according to velocities
+            4th - if we have traveled off the window, wrap to other side
+        '''
         # Update head of snake according to velocities,
         # and body according to square in front of it
         if self.__head.x == self.__food.x and self.__head.y == self.__food.y:
@@ -109,6 +127,10 @@ class Snake(object):
             self.__head.y = 19
 
     def dir_up(self):
+        '''
+        Method called to adjust velocities to move upwards, once we
+        ensure we are not currently traveling down.
+        '''
         # If not going down, change direction to up.
         if self.__yV != 1:   # if not going down
             self.__yV = -1   # go up
@@ -156,12 +178,7 @@ class Snake(object):
     # GETTERS
     def size(self):
         return self.__size
-######################################
 
-
-#**************************************#
-#                Square                #
-#**************************************#
 class Square(object):
     def __init__(self, start_x, start_y):
         self.x = start_x # x coordinate
@@ -172,18 +189,17 @@ class Square(object):
          square = pygame.Surface((self.__gap - 1,self.__gap - 1))
          square.fill((255,0,0))
          window.blit(square, (self.x * self.__gap + 1 ,self.y * self.__gap + 1))
-########################################
+
 
 def game_over(score):
+    '''
+    Display a message box once the game ends.
+    '''
     msg = "Your score was " + str(score)
     # root = Tk()
     # Tk().wm_withdraw()
     messagebox.showinfo('GAME OVER',msg)
 
-
-#************************************#
-#                MAIN                #
-#************************************#
 def main():
     pygame.init()                               # Initialize pygame
     board = Board()                             # create board object
