@@ -1,0 +1,19 @@
+@************@
+@  SSSSnake  @
+@************@
+
+Snake game that we based on the classic snake game made popular by early mobile phones.
+
+Authors: Gabi Chavez, Zach Barnes
+ 
+Dependencies:
+    tkinter - should be installed on the WTAMU virtual machine
+    pygame - can be installed to WTAMU virtual machine with command 'make pygame'
+
+Documentation:
+    We used pydocs to document our code. You can access this documentation via
+    the command 'make docs'.
+
+Makefile:
+    clean - remove html files containing documentation.
+    pygame - install the python library pygame

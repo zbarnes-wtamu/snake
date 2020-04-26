@@ -98,8 +98,6 @@ class Snake(object):
             3rd - update head position according to velocities
             4th - if we have traveled off the window, wrap to other side
         '''
-        # Update head of snake according to velocities,
-        # and body according to square in front of it
         if self.__head.x == self.__food.x and self.__head.y == self.__food.y:
             self.eat_food()
             self.grow()
@@ -131,58 +129,84 @@ class Snake(object):
         Method called to adjust velocities to move upwards, once we
         ensure we are not currently traveling down.
         '''
-        # If not going down, change direction to up.
         if self.__yV != 1:   # if not going down
             self.__yV = -1   # go up
             self.__xV = 0    # don't move horizontally
 
     def dir_right(self):
-        # If  not going left, change direction to right.
-        if self.__xV != -1:  # if not going left
-            self.__xV = 1    # go right
-            self.__yV = 0    # don't move vertically
+        '''
+        Method called to adjust velocities to move right, once we
+        ensure we are not currently traveling left.
+        '''
+        if self.__xV != -1:
+            self.__xV = 1
+            self.__yV = 0
 
     def dir_left(self):
-        # If not going right, change direction to left.
-        if self.__xV != 1:  # if not going right
-            self.__xV = -1  # go left
-            self.__yV  = 0  # dont move horizontally
+        '''
+        Method called to adjust velocities to move left, once we
+        ensure we are not currently traveling right.
+        '''
+        if self.__xV != 1:
+            self.__xV = -1
+            self.__yV  = 0
 
     def dir_down(self):
+        '''
+        Method called to adjust velocities to move down, once we
+        ensure we are not currently traveling up.
+        '''
         # If not going up, change direction to down.
         if self.__yV != -1: # if not going up
             self.__yV = 1   # go down
             self.__xV = 0   # dont move vertically
 
     def eat_food(self):
+        '''
+        This method generates and sets new coordinates for food using
+        randint.
+        '''
         self.__food.x = random.randint(0,19)
         self.__food.y = random.randint(0,19)
 
     def grow(self):
+        '''
+        This method will increase the value of __size by 1 and append
+        a new Square object onto the __body list.
+        '''
         self.__size += 1
         self.__body.append(Square(1,1))
 
     def draw(self, window):
+        '''
+        This method displays the food to the window passed to it.
+        '''
         self.__food.draw(window)
         self.__head.draw(window)
         for i in range(self.__size):
             self.__body[i].draw(window)
 
-    def check_collision(self) -> bool:
+    def check_collision(self):
+        '''
+        This method checks whether the head of snake is colliding
+        (sharing coordinates) with any of the segments of its body.
+        '''
         collision = False
         for segment in self.__body:
             if segment.x == self.__head.x and segment.y == self.__head.y:
                 collision = True
         return collision
 
-    # GETTERS
     def size(self):
+        '''
+        Getter that returns __size.
+        '''
         return self.__size
 
 class Square(object):
     def __init__(self, start_x, start_y):
-        self.x = start_x # x coordinate
-        self.y = start_y # y coordinate
+        self.x = start_x
+        self.y = start_y
         self.__gap = 500 // 20
 
     def draw(self, window):
@@ -200,6 +224,7 @@ def game_over(score):
     # Tk().wm_withdraw()
     messagebox.showinfo('GAME OVER',msg)
 
+
 def main():
     pygame.init()                               # Initialize pygame
     board = Board()                             # create board object
@@ -211,7 +236,9 @@ def main():
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                pygame.display.quit()
+                pygame.quit()
+                sys.exit()
         keys = pygame.key.get_pressed()         # This will give us a dictonary where each key has a value of 1 or 0. Where 1 is pressed and 0 is not pressed.
         if keys[pygame.K_LEFT]:                 # Left pushed
             snake.dir_left()                    # Go left
@@ -228,6 +255,6 @@ def main():
         fps.tick(8)                            # max fps
         running = not snake.check_collision()
 
-# call main
+
 if __name__ == "__main__":
     main()
