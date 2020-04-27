@@ -12,8 +12,11 @@ Dependencies:
 
 Documentation:
     We used pydocs to document our code. You can access this documentation via
-    the command 'make docs'.
+    the command 'make docs'. You may then clean the directory of the .html
+    files and __pycache__ with the command 'make clean'.
 
 Makefile:
     clean - remove html files containing documentation.
+    docs  - create the html files containing documentation, and launch firefox
+    to view them.
     pygame - install the python library pygame
