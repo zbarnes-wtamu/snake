@@ -262,7 +262,7 @@ def main():
         board.draw(window)                      # draw board to window
         snake.draw(window)                      # draw snake to window
         pygame.display.flip()                   # update the window
-        # fps.tick(8)                            # max fps
+        fps.tick(8)                            # max fps
         running = not snake.check_collision()
 
 
