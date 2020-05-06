@@ -15,7 +15,16 @@ import pygame
 import sys
 import random
 from datetime import datetime
+import winsound
+import _thread
 
+def beep():
+    '''
+    method to play a beep
+    '''
+    frequency = 2000
+    duration = 100
+    winsound.Beep(frequency, duration)
 
 class Board(object):
     '''
@@ -168,6 +177,7 @@ class Snake(object):
         '''
         self.__food.x = random.randint(0,19)
         self.__food.y = random.randint(0,19)
+        _thread.start_new_thread(beep, ())
 
     def grow(self):
         '''
@@ -252,7 +262,7 @@ def main():
         board.draw(window)                      # draw board to window
         snake.draw(window)                      # draw snake to window
         pygame.display.flip()                   # update the window
-        fps.tick(8)                            # max fps
+        # fps.tick(8)                            # max fps
         running = not snake.check_collision()
 
 
